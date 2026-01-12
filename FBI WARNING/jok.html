@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Quản Lý Firebase Database</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .tree { margin-left: 20px; }
+        .node { cursor: pointer; }
+        .node-header { display: flex; align-items: center; }
+        .node-key { font-weight: bold; }
+        .node-value { margin-left: 10px; }
+        .edit-btn, .delete-btn, .save-btn, .cancel-btn { margin-left: 10px; padding: 5px; }
+        .hidden { display: none; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Quản Lý Dữ Liệu Firebase Realtime Database</h1>
+    <p>URL Database: <a href="https://iqvocucdenhat0-default-rtdb.asia-southeast1.firebasedatabase.app/.json" target="_blank">Xem JSON gốc</a></p>
+    <button id="refresh">Tải Lại Dữ Liệu</button>
+    <div id="tree"></div>
+    <div id="error" class="error"></div>
+
+    <script>
+        const DB_URL = 'https://iqvocucdenhat0-default-rtdb.asia-southeast1.firebasedatabase.app/';
+
+        // Hàm xây dựng cây hierarchical từ JSON
+        function buildTree(data, path = '', parentElement) {
+            for (const key in data) {
+                const value = data[key];
+                const currentPath = path ? `${path}/${key}` : key;
+
+                const nodeDiv = document.createElement('div');
+                nodeDiv.classList.add('node');
+
+                const header = document.createElement('div');
+                header.classList.add('node-header');
+
+                const keySpan = document.createElement('span');
+                keySpan.classList.add('node-key');
+                keySpan.textContent = key + ': ';
+                header.appendChild(keySpan);
+
+                if (typeof value === 'object' && value !== null) {
+                    // Node là object hoặc array
+                    const toggle = document.createElement('span');
+                    toggle.textContent = '[+] ';
+                    toggle.onclick = () => {
+                        const childTree = nodeDiv.querySelector('.tree');
+                        if (childTree.classList.contains('hidden')) {
+                            childTree.classList.remove('hidden');
+                            toggle.textContent = '[-] ';
+                        } else {
+                            childTree.classList.add('hidden');
+                            toggle.textContent = '[+] ';
+                        }
+                    };
+                    header.appendChild(toggle);
+
+                    const childTree = document.createElement('div');
+                    childTree.classList.add('tree', 'hidden');
+                    buildTree(value, currentPath, childTree);
+                    nodeDiv.appendChild(header);
+                    nodeDiv.appendChild(childTree);
+                } else {
+                    // Node là giá trị primitive
+                    const valueSpan = document.createElement('span');
+                    valueSpan.classList.add('node-value');
+                    valueSpan.textContent = value;
+                    header.appendChild(valueSpan);
+
+                    // Nút chỉnh sửa
+                    const editBtn = document.createElement('button');
+                    editBtn.classList.add('edit-btn');
+                    editBtn.textContent = 'Sửa';
+                    editBtn.onclick = () => editNode(currentPath, valueSpan, editBtn);
+                    header.appendChild(editBtn);
+
+                    // Nút xóa
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.classList.add('delete-btn');
+                    deleteBtn.textContent = 'Xóa';
+                    deleteBtn.onclick = () => deleteNode(currentPath, nodeDiv);
+                    header.appendChild(deleteBtn);
+
+                    nodeDiv.appendChild(header);
+                }
+
+                parentElement.appendChild(nodeDiv);
+            }
+        }
+
+        // Hàm tải dữ liệu từ Firebase
+        async function loadData() {
+            try {
+                const response = await fetch(DB_URL + '.json');
+                if (!response.ok) throw new Error('Không thể truy xuất dữ liệu. Database có thể không public.');
+                const data = await response.json();
+                const treeDiv = document.getElementById('tree');
+                treeDiv.innerHTML = '';
+                buildTree(data, '', treeDiv);
+                document.getElementById('error').textContent = '';
+            } catch (err) {
+                document.getElementById('error').textContent = 'Lỗi: ' + err.message + '. Database có thể yêu cầu xác thực để đọc.';
+            }
+        }
+
+        // Hàm chỉnh sửa node (chỉ cho primitive values)
+        function editNode(path, valueSpan, editBtn) {
+            const originalValue = valueSpan.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = originalValue;
+            valueSpan.replaceWith(input);
+
+            const saveBtn = document.createElement('button');
+            saveBtn.classList.add('save-btn');
+            saveBtn.textContent = 'Lưu';
+            saveBtn.onclick = async () => {
+                const newValue = input.value;
+                try {
+                    await fetch(DB_URL + path + '.json', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newValue)
+                    });
+                    input.replaceWith(valueSpan);
+                    valueSpan.textContent = newValue;
+                    saveBtn.replaceWith(editBtn);
+                    cancelBtn.remove();
+                } catch (err) {
+                    alert('Lỗi khi lưu: ' + err.message + '. Database có thể không cho phép viết mà không xác thực.');
+                }
+            };
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.classList.add('cancel-btn');
+            cancelBtn.textContent = 'Hủy';
+            cancelBtn.onclick = () => {
+                input.replaceWith(valueSpan);
+                valueSpan.textContent = originalValue;
+                saveBtn.replaceWith(editBtn);
+                cancelBtn.remove();
+            };
+
+            editBtn.replaceWith(saveBtn);
+            saveBtn.after(cancelBtn);
+            input.focus();
+        }
+
+        // Hàm xóa node
+        async function deleteNode(path, nodeDiv) {
+            if (confirm('Bạn chắc chắn muốn xóa node này?')) {
+                try {
+                    await fetch(DB_URL + path + '.json', { method: 'DELETE' });
+                    nodeDiv.remove();
+                } catch (err) {
+                    alert('Lỗi khi xóa: ' + err.message + '. Database có thể không cho phép viết mà không xác thực.');
+                }
+            }
+        }
+
+        // Sự kiện tải lại
+        document.getElementById('refresh').onclick = loadData;
+
+        // Tải dữ liệu ban đầu
+        loadData();
+    </script>
+</body>
+</html>
