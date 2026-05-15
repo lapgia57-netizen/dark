@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Toán Mua Nhà Ở Xã Hội</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        
+        :root {
+            --primary: #1e88e5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            background: white;
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #555;
+            margin-top: 8px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #444;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.2);
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #1565c0;
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .result h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #c8e6c9;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .value {
+            font-weight: 700;
+            color: #1b5e20;
+        }
+        
+        .eligibility {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .eligible {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        
+        .not-eligible {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef5350;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .info-box {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 Tính Toán Mua Nhà Ở Xã Hội</h1>
+            <p class="subtitle">Công cụ hỗ trợ tính toán chi phí & kiểm tra điều kiện sơ bộ (2025-2026)</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Phần Thông tin cá nhân & Điều kiện -->
+            <div class="card">
+                <h2>📋 Thông tin cá nhân & Điều kiện</h2>
+                <div class="info-box">
+                    <strong>Lưu ý:</strong> Thu nhập tối đa (thực nhận): Độc thân ≤ 20 triệu/tháng | Đã kết hôn ≤ 40 triệu/tháng
+                </div>
+                
+                <div class="form-group">
+                    <label>Trạng thái hôn nhân</label>
+                    <select id="maritalStatus">
+                        <option value="single">Độc thân</option>
+                        <option value="married">Đã kết hôn</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Thu nhập thực nhận hàng tháng (VND)</label>
+                    <input type="number" id="monthlyIncome" placeholder="Ví dụ: 12000000" value="12000000">
+                </div>
+                
+                <div class="form-group">
+                    <label>Số người phụ thuộc (con cái dưới 18)</label>
+                    <input type="number" id="dependents" placeholder="0" value="1" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Diện tích nhà dự kiến (m²)</label>
+                    <input type="number" id="area" placeholder="50" value="60" min="30">
+                </div>
+                
+                <button onclick="checkEligibility()">Kiểm tra điều kiện sơ bộ</button>
+                
+                <div id="eligibilityResult" class="eligibility" style="display: none;"></div>
+            </div>
+
+            <!-- Phần Tính toán tài chính -->
+            <div class="card">
+                <h2>💰 Tính toán chi phí mua nhà</h2>
+                
+                <div class="form-group">
+                    <label>Giá nhà (VND)</label>
+                    <input type="number" id="housePrice" placeholder="Ví dụ: 1500000000" value="1800000000">
+                </div>
+                
+                <div class="form-group">
+                    <label>Tỷ lệ trả trước (%)</label>
+                    <input type="number" id="downPaymentPercent" placeholder="30" value="30" min="20" max="70">
+                </div>
+                
+                <div class="form-group">
+                    <label>Thời hạn vay (năm)</label>
+                    <input type="number" id="loanTerm" placeholder="15" value="15" min="5" max="25">
+                </div>
+                
+                <div class="form-group">
+                    <label>Lãi suất vay ưu đãi (%/năm)</label>
+                    <input type="number" id="interestRate" step="0.1" placeholder="5.4" value="5.4">
+                </div>
+                
+                <button onclick="calculateLoan()">Tính toán khoản vay</button>
+                
+                <div id="loanResult" class="result" style="display: none;">
+                    <h3>Kết quả tính toán</h3>
+                    <div id="resultContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 25px;">
+            <h2>📌 Thông tin tham khảo</h2>
+            <ul style="padding-left: 20px; line-height: 1.8;">
+                <li>Người mua chỉ được mua <strong>01 căn</strong> nhà ở xã hội</li>
+                <li>Trả trước lần đầu không vượt quá <strong>30%</strong> giá trị hợp đồng</li>
+                <li>Vay tối đa thường <strong>70%</strong> giá trị nhà</li>
+                <li>Lãi suất ưu đãi hiện khoảng <strong>5.4%</strong>/năm (có thể thay đổi)</li>
+                <li>Thời hạn vay tối đa lên đến <strong>20-25 năm</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>⚠️ Đây là công cụ tính toán ước tính. Kết quả chỉ mang tính tham khảo. Vui lòng liên hệ ngân hàng & cơ quan chức năng để có thông tin chính xác nhất.</p>
+        <p>© 2026 - Công cụ hỗ trợ mua nhà ở xã hội</p>
+    </footer>
+
+    <script>
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN').format(Math.round(amount)) + ' VND';
+        }
+        
+        function checkEligibility() {
+            const marital = document.getElementById('maritalStatus').value;
+            const income = parseFloat(document.getElementById('monthlyIncome').value) || 0;
+            const dependents = parseInt(document.getElementById('dependents').value) || 0;
+            
+            const resultDiv = document.getElementById('eligibilityResult');
+            
+            let maxIncome = 20000000;
+            if (marital === 'married') maxIncome = 40000000;
+            
+            if (dependents > 0 && marital === 'single') {
+                maxIncome = 30000000;
+            }
+            
+            if (income <= maxIncome) {
+                resultDiv.className = 'eligibility eligible';
+                resultDiv.innerHTML = `✅ <strong>BẠN ĐỦ ĐIỀU KIỆN SƠ BỘ</strong><br>Thu nhập của bạn nằm trong giới hạn cho phép.`;
+            } else {
+                resultDiv.className = 'eligibility not-eligible';
+                resultDiv.innerHTML = `❌ <strong>KHÔNG ĐỦ ĐIỀU KIỆN</strong><br>Thu nhập vượt quá giới hạn (tối đa ${formatCurrency(maxIncome)}).`;
+            }
+            resultDiv.style.display = 'block';
+        }
+        
+        function calculateLoan() {
+            const housePrice = parseFloat(document.getElementById('housePrice').value) || 0;
+            const downPercent = parseFloat(document.getElementById('downPaymentPercent').value) || 30;
+            const loanTermYears = parseFloat(document.getElementById('loanTerm').value) || 15;
+            const annualRate = parseFloat(document.getElementById('interestRate').value) || 5.4;
+            
+            if (housePrice <= 0) {
+                alert("Vui lòng nhập giá nhà hợp lệ!");
+                return;
+            }
+            
+            const downPayment = housePrice * (downPercent / 100);
+            const loanAmount = housePrice - downPayment;
+            const monthlyRate = annualRate / 100 / 12;
+            const numPayments = loanTermYears * 12;
+            
+            // Công thức trả góp hàng tháng (PMT)
+            let monthlyPayment = 0;
+            if (monthlyRate > 0) {
+                monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
+                                (Math.pow(1 + monthlyRate, numPayments) - 1);
+            } else {
+                monthlyPayment = loanAmount / numPayments;
+            }
+            
+            const totalPayment = monthlyPayment * numPayments;
+            const totalInterest = totalPayment - loanAmount;
+            
+            const resultHTML = `
+                <div class="result-item">
+                    <span>Giá nhà:</span>
+                    <span class="value">${formatCurrency(housePrice)}</span>
+                </div>
+                <div class="result-item">
+                    <span>Tiền trả trước (${downPercent}%):</span>
+                    <span class="value">${formatCurrency(downPayment)}</span>
+                </div>
+                <div class="result-item">
+                    <span>Số tiền vay:</span>
+                    <span class="value">${formatCurrency(loanAmount)}</span>
+                </div>
+                <div class="result-item">
+                    <span>Khoản trả hàng tháng:</span>
+                    <span class="value">${formatCurrency(monthlyPayment)}</span>
+                </div>
+                <div class="result-item">
+                    <span>Tổng lãi suất phải trả:</span>
+                    <span class="value">${formatCurrency(totalInterest)}</span>
+                </div>
+                <div class="result-item">
+                    <span>Tổng thanh toán (gốc + lãi):</span>
+                    <span class="value">${formatCurrency(totalPayment)}</span>
+                </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #4caf50; font-weight: 600; color: #1b5e20;">
+                    Thời hạn: ${loanTermYears} năm (${numPayments} tháng)
+                </div>
+            `;
+            
+            document.getElementById('resultContent').innerHTML = resultHTML;
+            document.getElementById('loanResult').style.display = 'block';
+        }
+        
+        // Tự động tính khi thay đổi một số input
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        calculateLoan();
+                    }
+                });
+            });
+            
+            // Tính mẫu ban đầu
+            setTimeout(() => {
+                calculateLoan();
+            }, 800);
+        });
+    </script>
+</body>
+</html>
