@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Viettel — Hành Trình 2021–2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --red: #E5002B;
+    --red-dark: #B0001F;
+    --red-light: #FF1A45;
+    --black: #0A0A0A;
+    --white: #F8F4EF;
+    --cream: #F0EBE3;
+    --gray: #888;
+    --line: rgba(229,0,43,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ───────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 8vw;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 80% 50%, rgba(229,0,43,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 70% at 10% 80%, rgba(229,0,43,0.08) 0%, transparent 60%);
+  }
+
+  .hero-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 11vw, 9rem);
+    font-weight: 900;
+    line-height: 0.92;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.45s forwards;
+  }
+
+  .hero-title span { color: var(--red); }
+
+  .hero-sub {
+    margin-top: 2.2rem;
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+    color: #aaa;
+    max-width: 480px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.75s forwards;
+  }
+
+  .hero-scroll {
+    margin-top: 4rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 1.1s forwards;
+  }
+
+  .hero-scroll span {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  .scroll-line {
+    width: 60px;
+    height: 1px;
+    background: var(--red);
+    transform-origin: left;
+    animation: growLine 1.2s 1.3s both;
+  }
+
+  .big-bg-text {
+    position: absolute;
+    right: -2vw;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(8rem, 18vw, 20rem);
+    font-weight: 900;
+    color: rgba(229,0,43,0.045);
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+
+  /* ── STATS BAR ──────────────────────── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stat {
+    padding: 2.5rem 4vw;
+    border-right: 1px solid var(--line);
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    color: var(--red);
+    line-height: 1;
+  }
+
+  .stat-label {
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: #888;
+    text-transform: uppercase;
+  }
+
+  /* ── SECTION TITLE ──────────────────── */
+  .section-head {
+    padding: 6rem 8vw 3rem;
+    display: flex;
+    align-items: baseline;
+    gap: 2rem;
+  }
+
+  .section-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+  }
+
+  .section-head .tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2px;
+  }
+
+  /* ── TIMELINE ───────────────────────── */
+  .timeline {
+    padding: 0 8vw 6rem;
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: calc(8vw + 28px);
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent);
+  }
+
+  .tl-item {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 0 2.5rem;
+    margin-bottom: 4rem;
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+
+  .tl-item.visible { opacity: 1; transform: none; }
+
+  .tl-dot {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--black);
+    border: 2px solid var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--red);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.02em;
+  }
+
+  .tl-dot.highlight {
+    background: var(--red);
+    color: var(--white);
+    border-color: var(--red);
+    box-shadow: 0 0 24px rgba(229,0,43,0.5);
+  }
+
+  .tl-content {
+    padding-top: 0.6rem;
+  }
+
+  .tl-year {
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.5rem;
+  }
+
+  .tl-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.25;
+  }
+
+  .tl-text {
+    font-size: 0.9rem;
+    color: #aaa;
+    line-height: 1.8;
+    max-width: 680px;
+  }
+
+  .tl-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .tl-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    background: rgba(229,0,43,0.1);
+    color: var(--red);
+    border-radius: 2px;
+  }
+
+  /* ── HIGHLIGHT CARDS ────────────────── */
+  .cards-section {
+    padding: 0 8vw 6rem;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .card {
+    background: var(--black);
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.35s;
+  }
+
+  .card:hover { background: #111; }
+
+  .card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--red);
+    transition: width 0.4s;
+  }
+
+  .card:hover::after { width: 100%; }
+
+  .card-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--white);
+  }
+
+  .card-desc {
+    font-size: 0.84rem;
+    color: #888;
+    line-height: 1.75;
+  }
+
+  /* ── QUOTE ──────────────────────────── */
+  .quote-section {
+    padding: 6rem 8vw;
+    display: grid;
+    grid-template-columns: 6px 1fr;
+    gap: 2.5rem;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .quote-bar {
+    height: 100%;
+    min-height: 80px;
+    background: var(--red);
+  }
+
+  .quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.35;
+    max-width: 800px;
+  }
+
+  .quote-text em {
+    color: var(--red);
+    font-style: normal;
+  }
+
+  .quote-source {
+    margin-top: 1.2rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  /* ── FOOTER ─────────────────────────── */
+  footer {
+    padding: 3rem 8vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+
+  .footer-brand span { color: var(--red); }
+
+  .footer-note {
+    font-size: 0.75rem;
+    color: #555;
+    max-width: 400px;
+    line-height: 1.6;
+  }
+
+  /* ── ANIMATIONS ─────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @keyframes growLine {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+
+  /* ── RESPONSIVE ─────────────────────── */
+  @media (max-width: 768px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .stat { border-right: none; border-bottom: 1px solid var(--line); }
+    .cards-grid { grid-template-columns: 1fr; }
+    .timeline::before { display: none; }
+    .tl-item { grid-template-columns: 1fr; gap: 0.75rem; }
+    .tl-dot { width: 44px; height: 44px; font-size: 0.65rem; }
+    .big-bg-text { display: none; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="big-bg-text">VTT</div>
+  <p class="hero-label">Tập đoàn Công nghiệp – Viễn thông Quân đội</p>
+  <h1 class="hero-title">VIETTEL<br/><span>2021–2026</span></h1>
+  <p class="hero-sub">Hành trình chuyển đổi từ nhà mạng sang doanh nghiệp công nghệ hàng đầu Đông Nam Á — đổi mới, bứt phá và vươn ra thế giới.</p>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Khám phá hành trình</span>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">110M+</div>
+    <div class="stat-label">Thuê bao toàn cầu</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">11</div>
+    <div class="stat-label">Quốc gia đầu tư</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">~160K</div>
+    <div class="stat-label">Cán bộ nhân viên</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">Top 1</div>
+    <div class="stat-label">Thương hiệu VT Việt Nam</div>
+  </div>
+</div>
+
+<!-- TIMELINE SECTION -->
+<div class="section-head">
+  <h2>Dấu Mốc Quan Trọng</h2>
+  <span class="tag">2021 → 2026</span>
+</div>
+
+<section class="timeline">
+
+  <div class="tl-item">
+    <div class="tl-dot">2021</div>
+    <div class="tl-content">
+      <div class="tl-year">2021</div>
+      <h3 class="tl-title">Chiến lược chuyển đổi số quốc gia — Viettel tiên phong</h3>
+      <p class="tl-text">Viettel công bố định hướng trở thành doanh nghiệp công nghệ, không chỉ là nhà mạng viễn thông. Hạ tầng 4G phủ 99,8% dân số; bắt đầu thử nghiệm 5G tại Hà Nội và TP.HCM. Ra mắt hệ sinh thái số với các nền tảng như Viettel Money (MyViettel), Viettel Pay, Viettel Cloud phục vụ chính phủ điện tử.</p>
+      <div class="tl-tags">
+        <span class="tl-tag">5G thử nghiệm</span>
+        <span class="tl-tag">Chuyển đổi số</span>
+        <span class="tl-tag">Viettel Cloud</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot">2022</div>
+    <div class="tl-content">
+      <div class="tl-year">2022</div>
+      <h3 class="tl-title">Bứt phá doanh thu — Hệ sinh thái số mở rộng mạnh mẽ</h3>
+      <p class="tl-text">Doanh thu hợp nhất vượt mốc 160.000 tỷ đồng, tăng trưởng ổn định bất chấp hậu COVID-19. Viettel IDC trở thành nhà cung cấp data center lớn nhất Việt Nam. Mạng lưới cáp quang FTTH đạt hơn 8 triệu thuê bao. Viettel Solutions ký kết nhiều hợp đồng chuyển đổi số cho các tỉnh thành và doanh nghiệp lớn.</p>
+      <div class="tl-tags">
+        <span class="tl-tag">Data Center</span>
+        <span class="tl-tag">FTTH 8M</span>
+        <span class="tl-tag">Tăng trưởng</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot highlight">2023</div>
+    <div class="tl-content">
+      <div class="tl-year">2023 — Năm bản lề</div>
+      <h3 class="tl-title">Triển khai thương mại 5G — Kỷ nguyên kết nối mới</h3>
+      <p class="tl-text">Viettel được cấp phép và chính thức triển khai thương mại mạng 5G tại Việt Nam, đánh dấu bước ngoặt lịch sử. Hạ tầng 5G phủ tại hàng chục tỉnh thành trọng điểm. Ra mắt Viettel AI, nền tảng trí tuệ nhân tạo ứng dụng trong y tế, giáo dục và sản xuất. Thương hiệu Viettel lọt top 500 thương hiệu giá trị nhất thế giới theo Brand Finance.</p>
+      <div class="tl-tags">
+        <span class="tl-tag">5G thương mại</span>
+        <span class="tl-tag">Viettel AI</span>
+        <span class="tl-tag">Top 500 thế giới</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot">2024</div>
+    <div class="tl-content">
+      <div class="tl-year">2024</div>
+      <h3 class="tl-title">Mở rộng quốc tế — Nâng tầm vị thế Đông Nam Á</h3>
+      <p class="tl-text">Viettel International tiếp tục củng cố vị trí tại 11 quốc gia, trong đó có thị trường tỷ dân Myanmar (Mytel đạt hơn 13 triệu thuê bao). Đẩy mạnh xuất khẩu phần mềm và giải pháp công nghệ sang các nước châu Á, châu Phi. Viettel Military Industry & Telecoms Group được Forbes Vietnam vinh danh trong nhiều bảng xếp hạng doanh nghiệp lớn nhất.</p>
+      <div class="tl-tags">
+        <span class="tl-tag">11 quốc gia</span>
+        <span class="tl-tag">Mytel Myanmar</span>
+        <span class="tl-tag">Xuất khẩu công nghệ</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot">2025</div>
+    <div class="tl-content">
+      <div class="tl-year">2025</div>
+      <h3 class="tl-title">Hạ tầng số quốc gia — Viettel là xương sống</h3>
+      <p class="tl-text">Viettel trở thành đối tác hạ tầng số chiến lược của Chính phủ Việt Nam trong chương trình xây dựng Chính phủ số, Kinh tế số và Xã hội số. Hệ thống Viettel Cloud cung cấp nền tảng cho hơn 200 cơ quan nhà nước. 5G phủ sóng toàn quốc tại các đô thị lớn; R&D chip 5G nội địa. Doanh thu dự kiến vượt 180.000 tỷ đồng.</p>
+      <div class="tl-tags">
+        <span class="tl-tag">Chính phủ số</span>
+        <span class="tl-tag">5G toàn quốc</span>
+        <span class="tl-tag">R&D chip</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot highlight">2026</div>
+    <div class="tl-content">
+      <div class="tl-year">2026 — Hiện tại</div>
+      <h3 class="tl-title">Viettel — Doanh nghiệp công nghệ toàn cầu</h3>
+      <p class="tl-text">Viettel tiếp tục dẫn đầu thị trường viễn thông Việt Nam với hơn 70% thị phần di động. Đẩy mạnh AI, IoT và điện toán đám mây; hướng đến mục tiêu doanh thu 200.000 tỷ đồng vào cuối thập kỷ. Là đại diện công nghệ Việt Nam trên bản đồ quốc tế, Viettel đặt mục tiêu lọt top 100 doanh nghiệp viễn thông lớn nhất thế giới.</p>
+      <div class="tl-tags">
+        <span class="tl-tag">AI &amp; IoT</span>
+        <span class="tl-tag">Top 100 thế giới</span>
+        <span class="tl-tag">70% thị phần</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- HIGHLIGHT CARDS -->
+<div class="section-head">
+  <h2>Lĩnh Vực Trọng Yếu</h2>
+  <span class="tag">Hệ sinh thái</span>
+</div>
+
+<section class="cards-section">
+  <div class="cards-grid">
+    <div class="card">
+      <span class="card-icon">📡</span>
+      <div class="card-title">Viễn thông &amp; 5G</div>
+      <p class="card-desc">Mạng di động phủ 99.8% dân số với 4G, tiên phong triển khai 5G thương mại từ 2023. Hạ tầng cáp quang FTTH dẫn đầu cả nước.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">☁️</span>
+      <div class="card-title">Viettel Cloud &amp; IDC</div>
+      <p class="card-desc">Nhà cung cấp dịch vụ điện toán đám mây và trung tâm dữ liệu lớn nhất Việt Nam, phục vụ hàng ngàn doanh nghiệp và cơ quan nhà nước.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🤖</span>
+      <div class="card-title">Trí tuệ nhân tạo</div>
+      <p class="card-desc">Nền tảng Viettel AI ứng dụng trong y tế (chẩn đoán hình ảnh), giáo dục (lớp học thông minh) và an ninh (nhận diện khuôn mặt).</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">💳</span>
+      <div class="card-title">Fintech &amp; Viettel Money</div>
+      <p class="card-desc">Hệ sinh thái thanh toán số phủ đến vùng sâu vùng xa, hơn 10 triệu ví điện tử hoạt động, thúc đẩy tài chính toàn diện.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🌏</span>
+      <div class="card-title">Đầu tư quốc tế</div>
+      <p class="card-desc">Hiện diện tại 11 quốc gia ở Đông Nam Á, châu Phi và Mỹ Latinh. Mytel (Myanmar) là một trong những doanh nghiệp mạng phát triển nhanh nhất khu vực.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔬</span>
+      <div class="card-title">R&amp;D &amp; Công nghiệp quốc phòng</div>
+      <p class="card-desc">Nghiên cứu và sản xuất thiết bị viễn thông, chip 5G nội địa, máy bay không người lái và các hệ thống công nghệ phục vụ quốc phòng an ninh.</p>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-section">
+  <div class="quote-bar"></div>
+  <div>
+    <p class="quote-text">"Từ một doanh nghiệp viễn thông, Viettel đang trở thành <em>doanh nghiệp công nghệ</em> — không chỉ kết nối Việt Nam mà còn kết nối thế giới."</p>
+    <p class="quote-source">— Định hướng chiến lược Viettel 2021–2030</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">VIET<span>TEL</span></div>
+  <p class="footer-note">Trang thông tin tổng hợp về hành trình phát triển của Tập đoàn Viettel từ 2021 đến 2026. Dữ liệu tham khảo từ các báo cáo công khai và thông tin báo chí chính thức.</p>
+</footer>
+
+<script>
+  // Scroll reveal for timeline items
+  const items = document.querySelectorAll('.tl-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  items.forEach(el => observer.observe(el));
+
+  // Counter animation for stats
+  function animateCount(el, target, suffix='') {
+    let start = 0;
+    const dur = 1600;
+    const step = dur / 60;
+    const inc = target / 60;
+    const timer = setInterval(() => {
+      start += inc;
+      if (start >= target) { start = target; clearInterval(timer); }
+      el.textContent = Math.floor(start).toLocaleString('vi-VN') + suffix;
+    }, step);
+  }
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      animateCount(document.querySelectorAll('.stat-num')[0], 110, 'M+');
+      statsObserver.disconnect();
+    }
+  }, { threshold: 0.5 });
+  statsObserver.observe(document.querySelector('.stats-bar'));
+</script>
+</body>
+</html>
