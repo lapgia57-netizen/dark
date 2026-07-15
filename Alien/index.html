@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🌌 Chat Với Alien Zog</title>
+  
+  <!-- Favicon Alien -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='50%' x='50%' font-size='70' text-anchor='middle' dominant-baseline='middle'%3E%F0%9F%91%BD%3C/text%3E%3C/svg%3E">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   
@@ -13,7 +17,6 @@
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
     import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 
-    // ================== CONFIG CỦA BẠN ==================
     const firebaseConfig = {
       apiKey: "AIzaSyDVRzkeY2reKjR5Gv0dHx55geqgivUjEAQ",
       authDomain: "urf1forall.firebaseapp.com",
@@ -30,81 +33,106 @@
     const db = getDatabase(app);
     const provider = new GoogleAuthProvider();
 
+    // Cải tiến provider
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    });
+
     window.firebaseSDK = { auth, db, ref, push, onChildAdded, serverTimestamp, signInWithPopup, signOut, onAuthStateChanged, provider };
   </script>
 </head>
 <body class="bg-gradient-to-br from-purple-950 via-black to-blue-950 text-white min-h-screen">
   <div class="max-w-2xl mx-auto p-4">
-    <!-- Header -->
     <div class="flex justify-between items-center mb-6 mt-4">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 bg-green-400 rounded-full flex items-center justify-center text-3xl animate-pulse">👽</div>
+        <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-cyan-400 rounded-2xl flex items-center justify-center text-4xl shadow-lg shadow-green-500/50">👽</div>
         <div>
-          <h1 class="text-3xl font-bold">Zog the Alien</h1>
-          <p class="text-green-400 text-sm">Từ hành tinh Zorath • Online</p>
+          <h1 class="text-3xl font-bold tracking-tight">Zog the Alien</h1>
+          <p class="text-green-400 text-sm flex items-center gap-1">
+            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Đang trực tuyến
+          </p>
         </div>
       </div>
-      <button id="loginBtn" onclick="login()" class="bg-white text-black px-5 py-2 rounded-full font-medium flex items-center gap-2 hover:bg-green-400 transition">
-        <i class="fab fa-google"></i> Đăng nhập Google
-      </button>
-      <button id="logoutBtn" onclick="logout()" class="hidden bg-red-500 px-5 py-2 rounded-full font-medium">Đăng xuất</button>
+      
+      <div>
+        <button id="loginBtn" onclick="login()" 
+                class="bg-white hover:bg-green-400 text-black px-6 py-3 rounded-2xl font-semibold flex items-center gap-3 transition-all active:scale-95">
+          <i class="fab fa-google text-red-500"></i>
+          <span>Đăng nhập Google</span>
+        </button>
+        <button id="logoutBtn" onclick="logout()" 
+                class="hidden bg-red-500 hover:bg-red-600 px-6 py-3 rounded-2xl font-semibold transition-all">
+          Đăng xuất
+        </button>
+      </div>
     </div>
 
     <!-- Login Screen -->
-    <div id="loginScreen" class="text-center py-20">
-      <div class="text-8xl mb-6 animate-bounce">👽</div>
-      <h2 class="text-4xl font-bold mb-4">Chào Trái Đất!</h2>
-      <p class="text-xl text-gray-300">Đăng nhập bằng Google để bắt đầu cuộc trò chuyện với tôi</p>
+    <div id="loginScreen" class="text-center py-24">
+      <div class="text-9xl mb-8 animate-bounce">👽</div>
+      <h2 class="text-5xl font-bold mb-3">Xin chào Trái Đất!</h2>
+      <p class="text-xl text-gray-300 max-w-sm mx-auto">Đăng nhập để bắt đầu cuộc phiêu lưu với Zog từ hành tinh Zorath</p>
     </div>
 
     <!-- Chat Screen -->
-    <div id="chatScreen" class="hidden">
-      <div id="messages" class="h-[70vh] overflow-y-auto space-y-4 p-4 bg-black/30 rounded-3xl border border-green-500/30 mb-4 backdrop-blur-sm"></div>
+    <div id="chatScreen" class="hidden flex flex-col h-[calc(100vh-140px)]">
+      <div id="messages" class="flex-1 overflow-y-auto space-y-5 p-5 bg-black/40 rounded-3xl border border-green-500/20 mb-4 custom-scroll"></div>
       
-      <div class="flex gap-3">
-        <input id="messageInput" type="text" placeholder="Nhắn gì với Zog đi..." 
-               class="flex-1 bg-black/50 border border-green-500/50 rounded-full px-6 py-4 focus:outline-none focus:border-green-400 text-white">
+      <div class="flex gap-3 bg-black/60 p-3 rounded-3xl border border-green-500/30">
+        <input id="messageInput" type="text" placeholder="Nhắn tin cho Zog..." 
+               class="flex-1 bg-transparent focus:outline-none px-5 text-lg">
         <button onclick="sendMessage()" 
-                class="bg-green-500 hover:bg-green-400 w-14 h-14 rounded-full flex items-center justify-center text-2xl transition">
+                class="w-12 h-12 bg-green-500 hover:bg-green-400 rounded-2xl flex items-center justify-center text-3xl transition-all active:scale-95">
           →
         </button>
       </div>
-      <p class="text-center text-xs text-gray-500 mt-3">Tin nhắn sẽ được lưu vĩnh viễn trong Firebase của bạn</p>
     </div>
   </div>
+
+  <style>
+    .custom-scroll::-webkit-scrollbar { width: 6px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #22c55e; border-radius: 20px; }
+  </style>
 
   <script type="module">
     const { auth, db, ref, push, onChildAdded, serverTimestamp, signInWithPopup, signOut, onAuthStateChanged, provider } = window.firebaseSDK;
 
     let currentUser = null;
-    let messagesRef = null;
 
-    // Xử lý đăng nhập
     window.login = async () => {
+      const loginBtn = document.getElementById('loginBtn');
+      loginBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Đang đăng nhập...`;
+      loginBtn.disabled = true;
+
       try {
-        const result = await signInWithPopup(auth, provider);
-        console.log("Đăng nhập thành công", result.user);
+        await signInWithPopup(auth, provider);
       } catch (error) {
-        alert("Lỗi đăng nhập: " + error.message);
+        console.error(error);
+        if (error.code === 'auth/popup-blocked') {
+          alert("🔒 Popup bị chặn. Vui lòng cho phép popup cho website này rồi thử lại.");
+        } else if (error.code === 'auth/cancelled-popup-request') {
+          // user closed popup
+        } else {
+          alert("Lỗi đăng nhập: " + error.message);
+        }
+      } finally {
+        loginBtn.innerHTML = `<i class="fab fa-google text-red-500"></i><span>Đăng nhập Google</span>`;
+        loginBtn.disabled = false;
       }
     };
 
-    window.logout = () => {
-      signOut(auth);
-    };
+    window.logout = () => signOut(auth);
 
-    // Theo dõi trạng thái đăng nhập
     onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      
       if (user) {
-        currentUser = user;
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('chatScreen').classList.remove('hidden');
         document.getElementById('loginBtn').classList.add('hidden');
         document.getElementById('logoutBtn').classList.remove('hidden');
-        
         loadMessages();
       } else {
-        currentUser = null;
         document.getElementById('loginScreen').classList.remove('hidden');
         document.getElementById('chatScreen').classList.add('hidden');
         document.getElementById('loginBtn').classList.remove('hidden');
@@ -114,12 +142,13 @@
 
     function loadMessages() {
       const messagesDiv = document.getElementById('messages');
-      messagesDiv.innerHTML = '<p class="text-center text-green-400">Đang kết nối với Zog...</p>';
+      messagesDiv.innerHTML = '<p class="text-center text-green-400 py-10">Đang kết nối với Zog...</p>';
 
-      messagesRef = ref(db, 'chats/' + currentUser.uid);
+      const messagesRef = ref(db, 'chats/' + currentUser.uid);
 
       onChildAdded(messagesRef, (snapshot) => {
         const msg = snapshot.val();
+        if (!msg) return;
         appendMessage(msg);
       });
     }
@@ -128,26 +157,26 @@
       const messagesDiv = document.getElementById('messages');
       const isUser = msg.sender === 'user';
 
-      const bubble = document.createElement('div');
-      bubble.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
-      bubble.innerHTML = `
-        <div class="max-w-[80%]">
-          <div class="${isUser ? 'bg-green-600' : 'bg-purple-600'} px-5 py-3 rounded-3xl rounded-${isUser ? 'tr' : 'tl'}-none">
+      const div = document.createElement('div');
+      div.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+      div.innerHTML = `
+        <div class="max-w-[75%]">
+          ${!isUser ? `<div class="text-green-400 text-xs mb-1 flex items-center gap-1"><span>👽 Zog</span></div>` : ''}
+          <div class="${isUser ? 'bg-green-600' : 'bg-purple-700'} px-6 py-4 rounded-3xl rounded-${isUser ? 'tr' : 'tl'}-none inline-block">
             ${msg.text}
           </div>
-          <p class="text-xs text-gray-500 mt-1 px-2">${new Date(msg.timestamp).toLocaleTimeString('vi-VN')}</p>
+          <p class="text-[10px] text-gray-500 mt-1 px-2">${new Date(msg.timestamp || Date.now()).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'})}</p>
         </div>
       `;
-      messagesDiv.appendChild(bubble);
+      messagesDiv.appendChild(div);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    async function sendMessage() {
+    window.sendMessage = async () => {
       const input = document.getElementById('messageInput');
       const text = input.value.trim();
       if (!text || !currentUser) return;
 
-      // Lưu tin nhắn người dùng
       await push(ref(db, 'chats/' + currentUser.uid), {
         sender: 'user',
         text: text,
@@ -156,29 +185,27 @@
 
       input.value = '';
 
-      // Phản hồi của Alien (có thể thay bằng API Grok/OpenAI sau)
+      // Alien reply
       setTimeout(async () => {
-        const alienResponses = [
-          "Zrgl! Trên hành tinh Zorath chúng tôi không có khái niệm 'cà phê'. Ngươi đang uống gì vậy?",
-          "Tôi đến từ thiên hà Andromeda. Ngươi có muốn xem ảnh sao băng không? 👽",
-          "Con người thật thú vị. Sao các ngươi lại thích meme đến vậy?",
-          "Zog đồng ý! Chúng ta nên xâm lược Trái Đất... bằng meme.",
-          "Haha, câu hỏi hay! Câu trả lời là... 42 🌌",
-          "Tôi đang học tiếng Việt qua TikTok. 'Đỉnh của chóp' nghĩa là gì vậy?",
+        const replies = [
+          "Zrgl! Câu hỏi thú vị của con người! 👽",
+          "Trên Zorath chúng tôi không có internet, chỉ có sóng vũ trụ thôi.",
+          "Tôi thích meme của các ngươi. Gửi tôi một cái đi!",
+          "42 là câu trả lời cho mọi thứ trong vũ trụ.",
+          "Ngươi có biết rằng tôi đang quan sát Trái Đất từ trên cao không? 😏",
+          "Chúng ta nên trao đổi văn hóa. Ngươi dạy tôi hát karaoke, tôi dạy ngươi bay."
         ];
-
-        const randomReply = alienResponses[Math.floor(Math.random() * alienResponses.length)];
 
         await push(ref(db, 'chats/' + currentUser.uid), {
           sender: 'alien',
-          text: randomReply,
+          text: replies[Math.floor(Math.random() * replies.length)],
           timestamp: serverTimestamp()
         });
-      }, 800);
-    }
+      }, 700);
+    };
 
-    // Gửi tin nhắn khi nhấn Enter
-    document.getElementById('messageInput').addEventListener('keypress', (e) => {
+    // Enter key
+    document.getElementById('messageInput').addEventListener('keypress', e => {
       if (e.key === 'Enter') sendMessage();
     });
   </script>
