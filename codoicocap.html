@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hệ thống Điều tra Đa năng - Cá nhân hóa</title>
+  <title>DỮ LIỆU NGƯỜI DÙNG - CÁ NHÂN HOÁ</title>
+  
+  <!-- BỔ SUNG FAVICON (ICO) -->
+  <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/1161/1161388.png">
+  
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -186,9 +190,9 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, remove, onValue, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // Cấu hình Firebase sử dụng Database được cung cấp
+    // Cấu hình Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDcHZ1RIALvsXC7iRey5y-8ek-j8bFP82U",
       authDomain: "proxyinternetcave.firebaseapp.com",
@@ -205,14 +209,14 @@
     const provider = new GoogleAuthProvider();
 
     let currentUser = null;
-    let userSnapshot = null; // Lưu trữ snapshot thô để phục vụ tìm kiếm local mượt mà hơn
+    let userSnapshot = null;
 
-    // Hàm lấy IP người dùng
+    // Hàm hỗ trợ lấy IP và Thời gian
     const getUserIP = async () => (await fetch("https://api64.ipify.org?format=json")).json().then(d => d.ip).catch(() => "Ẩn danh");
     const getTime = (tz) => new Date().toLocaleString(tz === "VN" ? "vi-VN" : "ko-KR", { timeZone: tz === "VN" ? "Asia/Ho_Chi_Minh" : "Asia/Seoul" });
     const highlightText = (text, search) => search ? text.replace(new RegExp(`(${search})`, 'gi'), '<span class="search-highlight">$1</span>') : text;
 
-    // Theo dõi trạng thái đăng nhập
+    // Theo dõi phiên làm việc tài khoản Google
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUser = user;
@@ -221,7 +225,6 @@
         document.getElementById("userName").textContent = user.displayName;
         document.getElementById("userAvatar").src = user.photoURL || "https://via.placeholder.com/32";
         
-        // Trỏ luồng dữ liệu vào nhánh riêng của User UID
         const userQueryRef = ref(db, `dieuTra/users/${user.uid}/data`);
         onValue(userQueryRef, (snapshot) => {
           userSnapshot = snapshot;
@@ -236,7 +239,6 @@
       }
     });
 
-    // Các hàm global kích hoạt qua Event HTML
     window.loginGoogle = () => {
       signInWithPopup(auth, provider).catch(error => alert("Đăng nhập thất bại: " + error.message));
     };
@@ -297,49 +299,89 @@
       renderTable(userSnapshot, searchWord);
     };
 
-    // Modal Control UI
+    // Modal Manager
     window.showModal = id => document.getElementById(id).style.display = "block";
     window.hideModal = id => {
       document.getElementById(id).style.display = "none";
       document.getElementById(id === "backupModal" ? "backupPassword" : "importPassword").value = "";
     };
 
+    // TỐI ƯU THUẬT TOÁN BACKUP: Lấy đầy đủ tất cả thuộc tính của đối tượng và mã hóa an toàn
     window.performBackup = () => {
       const pwd = document.getElementById("backupPassword").value;
       if (!pwd) return alert("Vui lòng nhập mật khẩu mã hóa!");
-      if (!userSnapshot || !userSnapshot.exists()) return hideModal("backupModal"), alert("Bạn chưa có dữ liệu nào để thực hiện Sao lưu!");
+      if (!userSnapshot || !userSnapshot.exists()) return hideModal("backupModal"), alert("Bạn chưa có dữ liệu nào để sao lưu!");
 
-      const encrypted = Object.fromEntries(Object.entries(userSnapshot.val()).map(([k, v]) => [k, { ...v, original: CryptoJS.AES.encrypt(v.original, pwd).toString() }]));
-      const blob = new Blob([JSON.stringify(encrypted, null, 2)], { type: "application/json" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `UserDB-Backup-${new Date().toISOString().slice(0,10)}.json`;
-      a.click();
-      hideModal("backupModal");
+      try {
+        const rawData = userSnapshot.val();
+        const encryptedData = {};
+
+        Object.keys(rawData).forEach(key => {
+          const item = rawData[key];
+          
+          // Kiểm tra và bảo toàn dữ liệu gốc chuỗi văn bản (Original Value)
+          const originalText = String(item.original || "");
+          const encryptedOriginal = CryptoJS.AES.encrypt(originalText, pwd).toString();
+
+          encryptedData[key] = {
+            ...item,
+            original: encryptedOriginal // Mã hóa AES với Mật khẩu người dùng nhập
+          };
+        });
+
+        // Tạo File tải về dưới dạng JSON
+        const blob = new Blob([JSON.stringify(encryptedData, null, 2)], { type: "application/json;charset=utf-8" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `UserDB-Backup-${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+
+        hideModal("backupModal");
+        alert("Xuất dữ liệu Sao lưu thành công!");
+      } catch (err) {
+        alert("Lỗi xảy ra trong quá trình mã hóa dữ liệu: " + err.message);
+      }
     };
 
+    // TỐI ƯU THUẬT TOÁN IMPORT: Giải mã tệp Sao lưu an toàn
     window.performImport = () => {
       const pwd = document.getElementById("importPassword").value;
       const file = document.getElementById("fileInput").files[0];
-      if (!pwd || !file) return alert("Vui lòng nhập mật khẩu giải mã và đính kèm file!");
+      if (!pwd || !file) return alert("Vui lòng nhập mật khẩu giải mã và đính kèm tệp .JSON!");
       
       const reader = new FileReader();
       reader.onload = async (e) => {
         try {
-          const data = JSON.parse(e.target.result);
-          let count = 0;
-          for (const d of Object.values(data)) {
-            const decrypted = CryptoJS.AES.decrypt(d.original, pwd).toString(CryptoJS.enc.Utf8);
-            if (decrypted) {
-              await set(ref(db, `dieuTra/users/${currentUser.uid}/data/${d.hashedKey}`), { ...d, original: decrypted });
-              count++;
+          const importedData = JSON.parse(e.target.result);
+          let successCount = 0;
+
+          for (const key of Object.keys(importedData)) {
+            const item = importedData[key];
+            
+            // Giải mã AES gốc
+            const decryptedBytes = CryptoJS.AES.decrypt(item.original, pwd);
+            const originalText = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+            // Kiểm tra mật khẩu đúng/sai
+            if (originalText) {
+              await set(ref(db, `dieuTra/users/${currentUser.uid}/data/${item.hashedKey || key}`), {
+                ...item,
+                original: originalText
+              });
+              successCount++;
             }
           }
-          hideModal("importModal");
-          document.getElementById("fileInput").value = "";
-          alert(`Đã nhập và giải mã thành công ${count} bản ghi dữ liệu mới.`);
+
+          if (successCount > 0) {
+            alert(`Đã giải mã và nhập thành công ${successCount} bản ghi dữ liệu!`);
+            hideModal("importModal");
+            document.getElementById("fileInput").value = "";
+          } else {
+            alert("Mật khẩu giải mã không chính xác hoặc dữ liệu file không hợp lệ!");
+          }
         } catch (err) {
-          alert("Lỗi phân tích cú pháp tệp dữ liệu hoặc mật khẩu sai cấu trúc!");
+          alert("Lỗi cấu trúc file JSON hoặc tệp đã bị hư hỏng!");
         }
       };
       reader.readAsText(file);
