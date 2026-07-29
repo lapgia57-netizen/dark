@@ -1,1 +1,399 @@
-https://fptcloud.com/deep-web/
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BÍ KÍP VÕ CÔNG 24/7</title>
+  
+  <!-- BỔ SUNG FAVICON (ICO) -->
+  <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/1161/1161388.png">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4cc9f0;
+      --danger-color: #f72585;
+      --success-color: #4ad66d;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --gray-color: #6c757d;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Roboto', sans-serif; background: #f5f7fa; color: var(--dark-color); line-height: 1.6; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    
+    /* Auth Section styling */
+    .auth-container { max-width: 450px; margin: 100px auto; padding: 30px; text-align: center; background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
+    .auth-container h2 { color: var(--primary-color); margin-bottom: 20px; }
+    .btn-google { background: #ea4335; color: white; width: 100%; justify-content: center; margin-top: 15px; }
+    .btn-google:hover { background: #d33426; }
+    
+    /* Main Dashboard Layout */
+    #dashboardSection { display: none; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0; }
+    h1 { color: var(--primary-color); font-size: 24px; display: flex; align-items: center; gap: 10px; }
+    
+    .user-profile { display: flex; align-items: center; gap: 10px; background: white; padding: 5px 15px; border-radius: 50px; box-shadow: var(--box-shadow); }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+    .user-name { font-weight: 500; font-size: 14px; }
+    .btn-logout { background: none; color: var(--danger-color); padding: 5px 10px; font-size: 14px; }
+    .btn-logout:hover { background: #fff0f6; transform: none; }
+
+    .status-bar { display: flex; gap: 15px; margin-bottom: 20px; }
+    .status-card { background: white; padding: 10px 15px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; }
+    .data-count { color: var(--success-color); }
+    
+    .panel { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 20px; margin-bottom: 20px; }
+    .panel-title { font-size: 18px; margin-bottom: 15px; color: var(--primary-color); display: flex; align-items: center; gap: 8px; }
+    .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+    input[type="text"], input[type="file"], input[type="password"] { flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: var(--border-radius); font-size: 16px; transition: var(--transition); }
+    input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2); }
+    
+    button { padding: 12px 20px; border: none; border-radius: var(--border-radius); background: var(--primary-color); color: white; font-weight: 500; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; }
+    button:hover { background: var(--secondary-color); transform: translateY(-2px); }
+    button.secondary { background: var(--light-color); color: var(--dark-color); }
+    button.secondary:hover { background: #e9ecef; }
+    button.danger { padding: 8px 12px; font-size: 14px; background: var(--danger-color); }
+    button.danger:hover { background: #d1146a; }
+    
+    .file-group { display: flex; gap: 10px; align-items: center; }
+    .file-input-wrapper { flex: 1; position: relative; }
+    .file-input-wrapper input[type="file"] { width: 100%; padding: 12px 15px; opacity: 0; position: absolute; left: 0; top: 0; cursor: pointer; }
+    .file-input-label { display: block; padding: 12px 15px; border: 1px dashed #ddd; border-radius: var(--border-radius); text-align: center; color: var(--gray-color); cursor: pointer; transition: var(--transition); }
+    
+    .table-container { overflow-x: auto; margin-top: 20px; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
+    th { background: var(--primary-color); color: white; padding: 15px; text-align: left; font-weight: 500; }
+    td { padding: 12px 15px; border-bottom: 1px solid #eee; }
+    .original-cell { font-weight: 500; word-break: break-word; color: #1e293b; }
+    .hash-cell { font-family: 'Courier New', monospace; font-size: 13px; word-break: break-all; }
+    .meta-info { font-size: 12px; color: var(--gray-color); margin-top: 5px; }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--gray-color); }
+    .empty-state i { font-size: 50px; margin-bottom: 15px; color: #e0e0e0; }
+    .search-highlight { background: #fff3bf; padding: 2px 0; }
+    
+    .modal { display: none; position: fixed; z-index: 10; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); }
+    .modal-content { background: #fefefe; margin: 15% auto; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); width: 400px; max-width: 90%; }
+    .modal-title { margin-bottom: 15px; color: var(--primary-color); font-size: 20px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    
+    @media (max-width: 768px) {
+      .input-group, .file-group { flex-direction: column; }
+      header { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .user-profile { width: 100%; justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MÀN HÌNH ĐĂNG NHẬP -->
+  <div id="authSection" class="auth-container">
+    <i class="fas fa-shield-alt" style="font-size: 48px; color: var(--primary-color); margin-bottom: 15px;"></i>
+    <h2>Hệ thống Điều tra Đa năng</h2>
+    <p style="color: var(--gray-color)">Vui lòng đăng nhập tài khoản Google của bạn để quản lý cơ sở dữ liệu điều tra bảo mật cá nhân.</p>
+    <button onclick="loginGoogle()" class="btn-google"><i class="fab fa-google"></i> Đăng nhập bằng Google</button>
+  </div>
+
+  <!-- MÀN HÌNH CHÍNH (DASHBOARD) -->
+  <div id="dashboardSection" class="container">
+    <header>
+      <h1><i class="fas fa-search"></i> Hệ thống điều tra thông minh</h1>
+      <div class="user-profile">
+        <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+        <span id="userName" class="user-name">Đang tải...</span>
+        <button onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </header>
+
+    <div class="status-bar">
+      <div class="status-card data-count"><i class="fas fa-database"></i> Dữ liệu của bạn: <span id="dataCount">0</span></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title"><i class="fas fa-plus-circle"></i> Thêm dữ liệu mới</h2>
+      <div class="input-group">
+        <input type="text" id="dataInput" placeholder="Nhập thông tin cá nhân cần bảo mật/điều tra...">
+        <button onclick="addData()"><i class="fas fa-plus"></i> Thêm</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title"><i class="fas fa-search"></i> Tìm kiếm dữ liệu</h2>
+      <div class="input-group">
+        <input type="text" id="searchInput" placeholder="Nhập từ khóa tìm kiếm trong kho dữ liệu..." onkeyup="searchData()">
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title"><i class="fas fa-file-import"></i> Quản lý dữ liệu (Mã hóa)</h2>
+      <div class="file-group">
+        <div class="file-input-wrapper">
+          <input type="file" id="fileInput" accept=".json">
+          <label for="fileInput" class="file-input-label"><i class="fas fa-cloud-upload-alt"></i> Chọn file JSON để nhập dữ liệu</label>
+        </div>
+        <button onclick="showModal('importModal')" class="secondary"><i class="fas fa-file-import"></i> Nhập</button>
+        <button onclick="showModal('backupModal')" class="secondary"><i class="fas fa-file-export"></i> Backup</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title"><i class="fas fa-table"></i> Danh sách dữ liệu đã lưu</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 30%;">Nội dung gốc (Original)</th>
+              <th style="width: 30%;">Thông tin SHA-256</th>
+              <th style="width: 25%;">MD5 (Khóa tham chiếu)</th>
+              <th style="width: 15%;">Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="dataTable">
+            <tr><td colspan="4" class="empty-state"><i class="fas fa-database"></i><p>Không có dữ liệu</p></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <div id="backupModal" class="modal">
+    <div class="modal-content">
+      <h3 class="modal-title"><i class="fas fa-file-export"></i> Backup dữ liệu</h3>
+      <p>Nhập mật khẩu để mã hóa tệp dữ liệu xuất bản:</p>
+      <input type="password" id="backupPassword" placeholder="Mật khẩu mã hóa nâng cao">
+      <div class="modal-actions">
+        <button onclick="hideModal('backupModal')" class="secondary">Hủy</button>
+        <button onclick="performBackup()">Backup</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="importModal" class="modal">
+    <div class="modal-content">
+      <h3 class="modal-title"><i class="fas fa-file-import"></i> Nhập dữ liệu</h3>
+      <p>Nhập mật khẩu để giải mã tệp tin phục hồi:</p>
+      <input type="password" id="importPassword" placeholder="Mật khẩu giải mã">
+      <div class="modal-actions">
+        <button onclick="hideModal('importModal')" class="secondary">Hủy</button>
+        <button onclick="performImport()">Nhập</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIREBASE SCRIPTS -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // Cấu hình Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDcHZ1RIALvsXC7iRey5y-8ek-j8bFP82U",
+      authDomain: "proxyinternetcave.firebaseapp.com",
+      databaseURL: "https://proxyinternetcave-default-rtdb.firebaseio.com",
+      projectId: "proxyinternetcave",
+      storageBucket: "proxyinternetcave.firebasestorage.app",
+      messagingSenderId: "811924386251",
+      appId: "1:811924386251:web:c3a94878f922e6fdde464e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const provider = new GoogleAuthProvider();
+
+    let currentUser = null;
+    let userSnapshot = null;
+
+    // Hàm hỗ trợ lấy IP và Thời gian
+    const getUserIP = async () => (await fetch("https://api64.ipify.org?format=json")).json().then(d => d.ip).catch(() => "Ẩn danh");
+    const getTime = (tz) => new Date().toLocaleString(tz === "VN" ? "vi-VN" : "ko-KR", { timeZone: tz === "VN" ? "Asia/Ho_Chi_Minh" : "Asia/Seoul" });
+    const highlightText = (text, search) => search ? String(text).replace(new RegExp(`(${search})`, 'gi'), '<span class="search-highlight">$1</span>') : text;
+
+    // Theo dõi phiên làm việc tài khoản Google
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById("authSection").style.display = "none";
+        document.getElementById("dashboardSection").style.display = "block";
+        document.getElementById("userName").textContent = user.displayName;
+        document.getElementById("userAvatar").src = user.photoURL || "https://via.placeholder.com/32";
+        
+        const userQueryRef = ref(db, `dieuTra/users/${user.uid}/data`);
+        onValue(userQueryRef, (snapshot) => {
+          userSnapshot = snapshot;
+          document.getElementById("dataCount").textContent = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+          renderTable(snapshot);
+        });
+      } else {
+        currentUser = null;
+        userSnapshot = null;
+        document.getElementById("authSection").style.display = "block";
+        document.getElementById("dashboardSection").style.display = "none";
+      }
+    });
+
+    window.loginGoogle = () => {
+      signInWithPopup(auth, provider).catch(error => alert("Đăng nhập thất bại: " + error.message));
+    };
+
+    window.logout = () => {
+      signOut(auth).catch(error => alert("Đăng xuất lỗi: " + error.message));
+    };
+
+    const renderTable = (snapshot, search = "") => {
+      const tbody = document.getElementById("dataTable");
+      if (!snapshot || !snapshot.exists()) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state"><i class="fas fa-database"></i><p>Không có dữ liệu nào được tìm thấy</p></td></tr>';
+        return;
+      }
+      
+      const data = Object.entries(snapshot.val()).map(([key, val]) => ({ key, ...val }))
+                         .filter(d => !search || 
+                           (d.original && d.original.toLowerCase().includes(search)) || 
+                           (d.sha && d.sha.toLowerCase().includes(search)) || 
+                           (d.hashedKey && d.hashedKey.toLowerCase().includes(search))
+                         );
+      
+      tbody.innerHTML = data.length ? data.map(d => `
+        <tr>
+          <td class="original-cell">${highlightText(d.original || "Chưa có văn bản", search)}</td>
+          <td class="hash-cell">${highlightText(d.sha || "", search)}<div class="meta-info"><div><i class="far fa-clock"></i> VN: ${d.timeVN || "---"}</div><div><i class="far fa-clock"></i> KR: ${d.timeKR || "---"}</div></div></td>
+          <td class="hash-cell">${highlightText(d.hashedKey || "", search)}<div class="meta-info"><i class="fas fa-globe"></i> IP: ${d.ip || "Unknown"}</div></td>
+          <td><button class="danger" onclick="deleteData('${d.key}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
+        </tr>`).join("") : '<tr><td colspan="4" class="empty-state"><i class="fas fa-search"></i><p>Không tìm thấy kết quả phù hợp</p></td></tr>';
+    };
+
+    window.addData = async () => {
+      if (!currentUser) return;
+      const input = document.getElementById("dataInput");
+      const data = input.value.trim();
+      if (!data) return alert("Vui lòng nhập dữ liệu!"), input.focus();
+
+      const md5Key = CryptoJS.MD5(data).toString();
+      const userRef = ref(db, `dieuTra/users/${currentUser.uid}/data/${md5Key}`);
+      
+      await set(userRef, {
+        sha: CryptoJS.SHA256(data).toString(),
+        original: data,
+        hashedKey: md5Key,
+        ip: await getUserIP(),
+        timeVN: getTime("VN"),
+        timeKR: getTime("KR")
+      });
+      
+      input.value = "";
+      input.focus();
+    };
+
+    window.deleteData = (key) => {
+      if (!currentUser) return;
+      if (confirm("Bạn có chắc chắn muốn xóa trường dữ liệu này?")) {
+        remove(ref(db, `dieuTra/users/${currentUser.uid}/data/${key}`));
+      }
+    };
+
+    window.searchData = () => {
+      const searchWord = document.getElementById("searchInput").value.toLowerCase();
+      renderTable(userSnapshot, searchWord);
+    };
+
+    // Modal Manager
+    window.showModal = id => document.getElementById(id).style.display = "block";
+    window.hideModal = id => {
+      document.getElementById(id).style.display = "none";
+      document.getElementById(id === "backupModal" ? "backupPassword" : "importPassword").value = "";
+    };
+
+    // THUẬT TOÁN BACKUP: Lấy đầy đủ tất cả thuộc tính và mã hóa chuỗi gốc (original)
+    window.performBackup = () => {
+      const pwd = document.getElementById("backupPassword").value;
+      if (!pwd) return alert("Vui lòng nhập mật khẩu mã hóa!");
+      if (!userSnapshot || !userSnapshot.exists()) return hideModal("backupModal"), alert("Bạn chưa có dữ liệu nào để sao lưu!");
+
+      try {
+        const rawData = userSnapshot.val();
+        const encryptedData = {};
+
+        Object.keys(rawData).forEach(key => {
+          const item = rawData[key];
+          
+          // Mã hóa nội dung văn bản gốc
+          const originalText = String(item.original || "");
+          const encryptedOriginal = CryptoJS.AES.encrypt(originalText, pwd).toString();
+
+          encryptedData[key] = {
+            ...item,
+            original: encryptedOriginal // Mã hóa AES bằng mật khẩu
+          };
+        });
+
+        const blob = new Blob([JSON.stringify(encryptedData, null, 2)], { type: "application/json;charset=utf-8" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `UserDB-Backup-${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+
+        hideModal("backupModal");
+        alert("Xuất dữ liệu Sao lưu thành công!");
+      } catch (err) {
+        alert("Lỗi xảy ra trong quá trình mã hóa dữ liệu: " + err.message);
+      }
+    };
+
+    // THUẬT TOÁN IMPORT: Giải mã tệp Sao lưu và khôi phục nội dung gốc
+    window.performImport = () => {
+      const pwd = document.getElementById("importPassword").value;
+      const file = document.getElementById("fileInput").files[0];
+      if (!pwd || !file) return alert("Vui lòng nhập mật khẩu giải mã và đính kèm tệp .JSON!");
+      
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          let successCount = 0;
+
+          for (const key of Object.keys(importedData)) {
+            const item = importedData[key];
+            
+            // Giải mã AES
+            const decryptedBytes = CryptoJS.AES.decrypt(item.original, pwd);
+            const originalText = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+            if (originalText) {
+              await set(ref(db, `dieuTra/users/${currentUser.uid}/data/${item.hashedKey || key}`), {
+                ...item,
+                original: originalText
+              });
+              successCount++;
+            }
+          }
+
+          if (successCount > 0) {
+            alert(`Đã giải mã và nhập thành công ${successCount} bản ghi dữ liệu!`);
+            hideModal("importModal");
+            document.getElementById("fileInput").value = "";
+          } else {
+            alert("Mật khẩu giải mã không chính xác hoặc dữ liệu file không hợp lệ!");
+          }
+        } catch (err) {
+          alert("Lỗi cấu trúc file JSON hoặc tệp đã bị hư hỏng!");
+        }
+      };
+      reader.readAsText(file);
+    };
+
+    document.getElementById("dataInput").addEventListener("keypress", e => e.key === "Enter" && addData());
+    window.onclick = e => e.target.className === "modal" && hideModal(e.target.id);
+  </script>
+</body>
+</html>
