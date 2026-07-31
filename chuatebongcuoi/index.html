@@ -2,163 +2,231 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BÍ KÍP VÕ CÔNG 24/7</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BÍ KÍP VÕ CÔNG 24/7 - Mobile Edition</title>
   
-  <!-- BỔ SUNG FAVICON (ICO) -->
   <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/1161/1161388.png">
-  
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
   <style>
     :root {
       --primary-color: #4361ee;
       --secondary-color: #3f37c9;
       --accent-color: #4cc9f0;
-      --danger-color: #f72585;
-      --success-color: #4ad66d;
-      --light-color: #f8f9fa;
-      --dark-color: #212529;
-      --gray-color: #6c757d;
-      --border-radius: 8px;
-      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s ease;
+      --danger-color: #ef233c;
+      --success-color: #38b000;
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-color: #2b2d42;
+      --gray-color: #8d99ae;
+      --border-radius: 12px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --transition: all 0.25s ease;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Roboto', sans-serif; background: #f5f7fa; color: var(--dark-color); line-height: 1.6; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    
-    /* Auth Section styling */
-    .auth-container { max-width: 450px; margin: 100px auto; padding: 30px; text-align: center; background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
-    .auth-container h2 { color: var(--primary-color); margin-bottom: 20px; }
-    .btn-google { background: #ea4335; color: white; width: 100%; justify-content: center; margin-top: 15px; }
-    .btn-google:hover { background: #d33426; }
-    
-    /* Main Dashboard Layout */
-    #dashboardSection { display: none; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0; }
-    h1 { color: var(--primary-color); font-size: 24px; display: flex; align-items: center; gap: 10px; }
-    
-    .user-profile { display: flex; align-items: center; gap: 10px; background: white; padding: 5px 15px; border-radius: 50px; box-shadow: var(--box-shadow); }
-    .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-    .user-name { font-weight: 500; font-size: 14px; }
-    .btn-logout { background: none; color: var(--danger-color); padding: 5px 10px; font-size: 14px; }
-    .btn-logout:hover { background: #fff0f6; transform: none; }
 
-    .status-bar { display: flex; gap: 15px; margin-bottom: 20px; }
-    .status-card { background: white; padding: 10px 15px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; }
-    .data-count { color: var(--success-color); }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Roboto', sans-serif; background: var(--bg-color); color: var(--text-color); line-height: 1.5; padding-bottom: 30px; }
     
-    .panel { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 20px; margin-bottom: 20px; }
-    .panel-title { font-size: 18px; margin-bottom: 15px; color: var(--primary-color); display: flex; align-items: center; gap: 8px; }
-    .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-    input[type="text"], input[type="file"], input[type="password"] { flex: 1; padding: 12px 15px; border: 1px solid #ddd; border-radius: var(--border-radius); font-size: 16px; transition: var(--transition); }
-    input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2); }
-    
-    button { padding: 12px 20px; border: none; border-radius: var(--border-radius); background: var(--primary-color); color: white; font-weight: 500; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; }
-    button:hover { background: var(--secondary-color); transform: translateY(-2px); }
-    button.secondary { background: var(--light-color); color: var(--dark-color); }
-    button.secondary:hover { background: #e9ecef; }
-    button.danger { padding: 8px 12px; font-size: 14px; background: var(--danger-color); }
-    button.danger:hover { background: #d1146a; }
-    
-    .file-group { display: flex; gap: 10px; align-items: center; }
-    .file-input-wrapper { flex: 1; position: relative; }
-    .file-input-wrapper input[type="file"] { width: 100%; padding: 12px 15px; opacity: 0; position: absolute; left: 0; top: 0; cursor: pointer; }
-    .file-input-label { display: block; padding: 12px 15px; border: 1px dashed #ddd; border-radius: var(--border-radius); text-align: center; color: var(--gray-color); cursor: pointer; transition: var(--transition); }
-    
-    .table-container { overflow-x: auto; margin-top: 20px; }
-    table { width: 100%; border-collapse: collapse; background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
-    th { background: var(--primary-color); color: white; padding: 15px; text-align: left; font-weight: 500; }
-    td { padding: 12px 15px; border-bottom: 1px solid #eee; }
-    .original-cell { font-weight: 500; word-break: break-word; color: #1e293b; }
-    .hash-cell { font-family: 'Courier New', monospace; font-size: 13px; word-break: break-all; }
-    .meta-info { font-size: 12px; color: var(--gray-color); margin-top: 5px; }
-    .empty-state { text-align: center; padding: 40px 20px; color: var(--gray-color); }
-    .empty-state i { font-size: 50px; margin-bottom: 15px; color: #e0e0e0; }
-    .search-highlight { background: #fff3bf; padding: 2px 0; }
-    
-    .modal { display: none; position: fixed; z-index: 10; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); }
-    .modal-content { background: #fefefe; margin: 15% auto; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); width: 400px; max-width: 90%; }
-    .modal-title { margin-bottom: 15px; color: var(--primary-color); font-size: 20px; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-    
-    @media (max-width: 768px) {
-      .input-group, .file-group { flex-direction: column; }
-      header { flex-direction: column; align-items: flex-start; gap: 15px; }
-      .user-profile { width: 100%; justify-content: space-between; }
+    .container { max-width: 800px; margin: 0 auto; padding: 12px; }
+
+    /* Login Screen Mobile */
+    .auth-container { 
+      max-width: 380px; 
+      margin: 60px auto 20px; 
+      padding: 28px 20px; 
+      text-align: center; 
+      background: var(--card-bg); 
+      border-radius: var(--border-radius); 
+      box-shadow: var(--box-shadow); 
     }
+    .auth-container h2 { font-size: 20px; color: var(--primary-color); margin: 15px 0 10px; }
+    .auth-container p { font-size: 13px; color: var(--gray-color); margin-bottom: 20px; }
+
+    /* Header Profile Mobile */
+    #dashboardSection { display: none; }
+    header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 15px; 
+      padding: 10px 0; 
+    }
+    h1 { font-size: 18px; color: var(--primary-color); display: flex; align-items: center; gap: 8px; }
+
+    .user-profile { 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      background: var(--card-bg); 
+      padding: 4px 10px; 
+      border-radius: 30px; 
+      box-shadow: var(--box-shadow); 
+    }
+    .user-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+    .user-name { font-weight: 500; font-size: 12px; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .btn-logout { background: none; border: none; color: var(--danger-color); padding: 4px; font-size: 14px; cursor: pointer; }
+
+    /* Counter Badge */
+    .status-bar { margin-bottom: 15px; }
+    .status-card { 
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+      color: white; 
+      padding: 12px 16px; 
+      border-radius: var(--border-radius); 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      font-weight: 500; 
+      font-size: 14px;
+    }
+    .status-card span { background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 12px; font-weight: 700; }
+
+    /* Form Panels */
+    .panel { background: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 15px; margin-bottom: 15px; }
+    .panel-title { font-size: 15px; margin-bottom: 12px; color: var(--primary-color); display: flex; align-items: center; gap: 8px; font-weight: 700; }
+    
+    .input-group { display: flex; flex-direction: column; gap: 8px; }
+    @media (min-width: 576px) { .input-group { flex-direction: row; } }
+
+    input[type="text"], input[type="password"] { 
+      width: 100%; 
+      padding: 12px; 
+      border: 1px solid #e2e8f0; 
+      border-radius: var(--border-radius); 
+      font-size: 14px; 
+      outline: none; 
+      transition: var(--transition); 
+      background: #f8fafc;
+    }
+    input:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15); }
+
+    button { 
+      width: 100%; 
+      padding: 12px; 
+      border: none; 
+      border-radius: var(--border-radius); 
+      background: var(--primary-color); 
+      color: white; 
+      font-weight: 600; 
+      font-size: 14px; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 6px; 
+      transition: var(--transition); 
+    }
+    button:active { transform: scale(0.98); }
+    button.secondary { background: #e2e8f0; color: var(--text-color); }
+    button.danger { background: #ffe5e5; color: var(--danger-color); padding: 6px 12px; width: auto; font-size: 12px; }
+    button.btn-google { background: #ea4335; }
+
+    .file-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+    .file-input-wrapper input[type="file"] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+    .file-input-label { display: block; padding: 10px; border: 1px dashed var(--gray-color); border-radius: var(--border-radius); text-align: center; color: var(--gray-color); font-size: 13px; }
+
+    /* DATA CARDS MOBILE (Thay thế Table) */
+    .data-list { display: flex; flex-direction: column; gap: 12px; }
+    
+    .data-card { 
+      background: var(--card-bg); 
+      border-radius: var(--border-radius); 
+      padding: 14px; 
+      box-shadow: var(--box-shadow); 
+      border-left: 4px solid var(--primary-color); 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px; 
+      position: relative;
+    }
+
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .card-title { font-weight: 700; font-size: 15px; color: #1e293b; word-break: break-word; }
+    .type-badge { font-size: 10px; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; background: #e0e7ff; color: var(--primary-color); font-weight: 700; white-space: nowrap; }
+
+    .hash-box { background: #f8fafc; border: 1px solid #edf2f7; border-radius: 8px; padding: 8px; font-size: 12px; }
+    .hash-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .hash-row:last-child { margin-bottom: 0; }
+    .hash-label { font-weight: 600; color: var(--gray-color); font-size: 11px; }
+    .hash-value { font-family: monospace; font-size: 11px; color: #475569; word-break: break-all; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .btn-copy { background: none; border: none; color: var(--primary-color); padding: 2px 4px; font-size: 12px; width: auto; cursor: pointer; }
+
+    .card-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--gray-color); border-top: 1px solid #f1f5f9; padding-top: 8px; }
+    .meta-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .meta-item { display: flex; align-items: center; gap: 4px; }
+
+    .search-highlight { background: #fef08a; padding: 0 2px; border-radius: 2px; }
+    .empty-state { text-align: center; padding: 30px 10px; color: var(--gray-color); }
+    .empty-state i { font-size: 40px; margin-bottom: 10px; opacity: 0.5; }
+
+    /* Modals Mobile */
+    .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+    .modal-content { background: var(--card-bg); margin: 30% auto 0; padding: 20px; border-radius: var(--border-radius); width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .modal-title { font-size: 16px; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 15px; }
   </style>
 </head>
 <body>
 
   <!-- MÀN HÌNH ĐĂNG NHẬP -->
   <div id="authSection" class="auth-container">
-    <i class="fas fa-shield-alt" style="font-size: 48px; color: var(--primary-color); margin-bottom: 15px;"></i>
-    <h2>Hệ thống Điều tra Đa năng</h2>
-    <p style="color: var(--gray-color)">Vui lòng đăng nhập tài khoản Google của bạn để quản lý cơ sở dữ liệu điều tra bảo mật cá nhân.</p>
+    <i class="fas fa-shield-alt" style="font-size: 50px; color: var(--primary-color);"></i>
+    <h2>Hệ Thống Điều Tra</h2>
+    <p>Đăng nhập tài khoản Google để truy cập dữ liệu bảo mật cá nhân.</p>
     <button onclick="loginGoogle()" class="btn-google"><i class="fab fa-google"></i> Đăng nhập bằng Google</button>
   </div>
 
   <!-- MÀN HÌNH CHÍNH (DASHBOARD) -->
   <div id="dashboardSection" class="container">
     <header>
-      <h1><i class="fas fa-search"></i> Hệ thống điều tra thông minh</h1>
+      <h1><i class="fas fa-search-location"></i> Điều Tra 24/7</h1>
       <div class="user-profile">
         <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
-        <span id="userName" class="user-name">Đang tải...</span>
-        <button onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i></button>
+        <span id="userName" class="user-name">...</span>
+        <button onclick="logout()" class="btn-logout" title="Đăng xuất"><i class="fas fa-sign-out-alt"></i></button>
       </div>
     </header>
 
     <div class="status-bar">
-      <div class="status-card data-count"><i class="fas fa-database"></i> Dữ liệu của bạn: <span id="dataCount">0</span></div>
+      <div class="status-card">
+        <span><i class="fas fa-database"></i> Dữ liệu lưu trữ</span>
+        <span id="dataCount">0</span>
+      </div>
     </div>
 
+    <!-- Ô THÊM DỮ LIỆU -->
     <div class="panel">
-      <h2 class="panel-title"><i class="fas fa-plus-circle"></i> Thêm dữ liệu mới</h2>
+      <div class="panel-title"><i class="fas fa-plus-circle"></i> Thêm Dữ Liệu Mới</div>
       <div class="input-group">
-        <input type="text" id="dataInput" placeholder="Nhập thông tin cá nhân cần bảo mật/điều tra...">
-        <button onclick="addData()"><i class="fas fa-plus"></i> Thêm</button>
+        <input type="text" id="dataInput" placeholder="Nhập email, SĐT, văn bản...">
+        <button onclick="addData()"><i class="fas fa-plus"></i> Thêm Lưu Trữ</button>
       </div>
     </div>
 
+    <!-- TÌM KIẾM & THAO TÁC -->
     <div class="panel">
-      <h2 class="panel-title"><i class="fas fa-search"></i> Tìm kiếm dữ liệu</h2>
-      <div class="input-group">
-        <input type="text" id="searchInput" placeholder="Nhập từ khóa tìm kiếm trong kho dữ liệu..." onkeyup="searchData()">
+      <div class="panel-title"><i class="fas fa-filter"></i> Tìm Kiếm & Công Cụ</div>
+      <input type="text" id="searchInput" placeholder="Nhập từ khóa tìm kiếm..." onkeyup="searchData()" style="margin-bottom: 10px;">
+      
+      <div class="file-input-wrapper">
+        <input type="file" id="fileInput" accept=".json">
+        <label for="fileInput" class="file-input-label" id="fileLabel"><i class="fas fa-file-upload"></i> Chọn file JSON backup</label>
+      </div>
+
+      <div class="file-actions">
+        <button onclick="showModal('importModal')" class="secondary"><i class="fas fa-file-import"></i> Nhập JSON</button>
+        <button onclick="showModal('backupModal')" class="secondary"><i class="fas fa-file-export"></i> Backup File</button>
       </div>
     </div>
 
-    <div class="panel">
-      <h2 class="panel-title"><i class="fas fa-file-import"></i> Quản lý dữ liệu (Mã hóa)</h2>
-      <div class="file-group">
-        <div class="file-input-wrapper">
-          <input type="file" id="fileInput" accept=".json">
-          <label for="fileInput" class="file-input-label"><i class="fas fa-cloud-upload-alt"></i> Chọn file JSON để nhập dữ liệu</label>
-        </div>
-        <button onclick="showModal('importModal')" class="secondary"><i class="fas fa-file-import"></i> Nhập</button>
-        <button onclick="showModal('backupModal')" class="secondary"><i class="fas fa-file-export"></i> Backup</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2 class="panel-title"><i class="fas fa-table"></i> Danh sách dữ liệu đã lưu</h2>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 30%;">Nội dung gốc (Original)</th>
-              <th style="width: 30%;">Thông tin SHA-256</th>
-              <th style="width: 25%;">MD5 (Khóa tham chiếu)</th>
-              <th style="width: 15%;">Hành động</th>
-            </tr>
-          </thead>
-          <tbody id="dataTable">
-            <tr><td colspan="4" class="empty-state"><i class="fas fa-database"></i><p>Không có dữ liệu</p></td></tr>
-          </tbody>
-        </table>
+    <!-- DANH SÁCH DỮ LIỆU (MOBILE CARDS) -->
+    <div class="panel" style="background: transparent; box-shadow: none; padding: 0;">
+      <div class="panel-title" style="padding-left: 5px;"><i class="fas fa-list-ul"></i> Kho Dữ Liệu Đã Lưu</div>
+      <div id="dataList" class="data-list">
+        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Đang tải dữ liệu...</p></div>
       </div>
     </div>
   </div>
@@ -166,24 +234,24 @@
   <!-- MODALS -->
   <div id="backupModal" class="modal">
     <div class="modal-content">
-      <h3 class="modal-title"><i class="fas fa-file-export"></i> Backup dữ liệu</h3>
-      <p>Nhập mật khẩu để mã hóa tệp dữ liệu xuất bản:</p>
-      <input type="password" id="backupPassword" placeholder="Mật khẩu mã hóa nâng cao">
+      <div class="modal-title"><i class="fas fa-lock"></i> Mã Hóa Sao Lưu</div>
+      <p style="font-size: 12px; color: var(--gray-color); margin-bottom: 10px;">Đặt mật khẩu để bảo vệ tệp dữ liệu xuất ra:</p>
+      <input type="password" id="backupPassword" placeholder="Nhập mật khẩu mã hóa">
       <div class="modal-actions">
         <button onclick="hideModal('backupModal')" class="secondary">Hủy</button>
-        <button onclick="performBackup()">Backup</button>
+        <button onclick="performBackup()">Tạo Backup</button>
       </div>
     </div>
   </div>
 
   <div id="importModal" class="modal">
     <div class="modal-content">
-      <h3 class="modal-title"><i class="fas fa-file-import"></i> Nhập dữ liệu</h3>
-      <p>Nhập mật khẩu để giải mã tệp tin phục hồi:</p>
+      <div class="modal-title"><i class="fas fa-key"></i> Giải Mã Dữ Liệu</div>
+      <p style="font-size: 12px; color: var(--gray-color); margin-bottom: 10px;">Nhập mật khẩu đã dùng để khóa tệp file này:</p>
       <input type="password" id="importPassword" placeholder="Mật khẩu giải mã">
       <div class="modal-actions">
         <button onclick="hideModal('importModal')" class="secondary">Hủy</button>
-        <button onclick="performImport()">Nhập</button>
+        <button onclick="performImport()">Phục Hồi</button>
       </div>
     </div>
   </div>
@@ -194,7 +262,6 @@
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // Cấu hình Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDcHZ1RIALvsXC7iRey5y-8ek-j8bFP82U",
       authDomain: "proxyinternetcave.firebaseapp.com",
@@ -213,12 +280,20 @@
     let currentUser = null;
     let userSnapshot = null;
 
-    // Hàm hỗ trợ lấy IP và Thời gian
     const getUserIP = async () => (await fetch("https://api64.ipify.org?format=json")).json().then(d => d.ip).catch(() => "Ẩn danh");
     const getTime = (tz) => new Date().toLocaleString(tz === "VN" ? "vi-VN" : "ko-KR", { timeZone: tz === "VN" ? "Asia/Ho_Chi_Minh" : "Asia/Seoul" });
     const highlightText = (text, search) => search ? String(text).replace(new RegExp(`(${search})`, 'gi'), '<span class="search-highlight">$1</span>') : text;
 
-    // Theo dõi phiên làm việc tài khoản Google
+    // Nhận diện loại dữ liệu tự động
+    const detectType = (str) => {
+      if (!str) return "Văn bản";
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str)) return "Email";
+      if (/(0[3|5|7|8|9])+([0-9]{8})\b/.test(str)) return "SĐT";
+      if (/^(https?:\/\/)/.test(str)) return "Link URL";
+      if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(str)) return "IP Address";
+      return "Văn bản";
+    };
+
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUser = user;
@@ -231,7 +306,7 @@
         onValue(userQueryRef, (snapshot) => {
           userSnapshot = snapshot;
           document.getElementById("dataCount").textContent = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
-          renderTable(snapshot);
+          renderDataList(snapshot);
         });
       } else {
         currentUser = null;
@@ -241,18 +316,14 @@
       }
     });
 
-    window.loginGoogle = () => {
-      signInWithPopup(auth, provider).catch(error => alert("Đăng nhập thất bại: " + error.message));
-    };
+    window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert("Lỗi đăng nhập: " + e.message));
+    window.logout = () => signOut(auth).catch(e => alert("Lỗi đăng xuất: " + e.message));
 
-    window.logout = () => {
-      signOut(auth).catch(error => alert("Đăng xuất lỗi: " + error.message));
-    };
-
-    const renderTable = (snapshot, search = "") => {
-      const tbody = document.getElementById("dataTable");
+    // Hiển thị danh sách dữ liệu theo giao diện Card Mobile
+    const renderDataList = (snapshot, search = "") => {
+      const container = document.getElementById("dataList");
       if (!snapshot || !snapshot.exists()) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state"><i class="fas fa-database"></i><p>Không có dữ liệu nào được tìm thấy</p></td></tr>';
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-folder-open"></i><p>Chưa có dữ liệu nào được lưu</p></div>';
         return;
       }
       
@@ -263,20 +334,55 @@
                            (d.hashedKey && d.hashedKey.toLowerCase().includes(search))
                          );
       
-      tbody.innerHTML = data.length ? data.map(d => `
-        <tr>
-          <td class="original-cell">${highlightText(d.original || "Chưa có văn bản", search)}</td>
-          <td class="hash-cell">${highlightText(d.sha || "", search)}<div class="meta-info"><div><i class="far fa-clock"></i> VN: ${d.timeVN || "---"}</div><div><i class="far fa-clock"></i> KR: ${d.timeKR || "---"}</div></div></td>
-          <td class="hash-cell">${highlightText(d.hashedKey || "", search)}<div class="meta-info"><i class="fas fa-globe"></i> IP: ${d.ip || "Unknown"}</div></td>
-          <td><button class="danger" onclick="deleteData('${d.key}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
-        </tr>`).join("") : '<tr><td colspan="4" class="empty-state"><i class="fas fa-search"></i><p>Không tìm thấy kết quả phù hợp</p></td></tr>';
+      if (!data.length) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-search"></i><p>Không tìm thấy kết quả phù hợp</p></div>';
+        return;
+      }
+
+      container.innerHTML = data.map(d => {
+        const dataType = detectType(d.original);
+        return `
+        <div class="data-card">
+          <div class="card-header">
+            <div class="card-title">${highlightText(d.original || "N/A", search)}</div>
+            <span class="type-badge">${dataType}</span>
+          </div>
+
+          <div class="hash-box">
+            <div class="hash-row">
+              <span class="hash-label">SHA256:</span>
+              <span class="hash-value">${highlightText(d.sha || "N/A", search)}</span>
+              <button class="btn-copy" onclick="copyText('${d.sha}')" title="Copy"><i class="far fa-copy"></i></button>
+            </div>
+            <div class="hash-row">
+              <span class="hash-label">MD5:</span>
+              <span class="hash-value">${highlightText(d.hashedKey || "N/A", search)}</span>
+              <button class="btn-copy" onclick="copyText('${d.hashedKey}')" title="Copy"><i class="far fa-copy"></i></button>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <div class="meta-tags">
+              <span class="meta-item"><i class="fas fa-globe"></i> ${d.ip || "Ẩn danh"}</span>
+              <span class="meta-item"><i class="far fa-clock"></i> VN: ${d.timeVN ? d.timeVN.split(' ')[1] || d.timeVN : "---"}</span>
+            </div>
+            <button class="danger" onclick="deleteData('${d.key}')"><i class="fas fa-trash-alt"></i> Xóa</button>
+          </div>
+        </div>
+      `}).join("");
+    };
+
+    window.copyText = (text) => {
+      if (!text) return;
+      navigator.clipboard.writeText(text);
+      alert("Đã sao chép mã Hash vào bộ nhớ tạm!");
     };
 
     window.addData = async () => {
       if (!currentUser) return;
       const input = document.getElementById("dataInput");
       const data = input.value.trim();
-      if (!data) return alert("Vui lòng nhập dữ liệu!"), input.focus();
+      if (!data) return alert("Vui lòng nhập thông tin!");
 
       const md5Key = CryptoJS.MD5(data).toString();
       const userRef = ref(db, `dieuTra/users/${currentUser.uid}/data/${md5Key}`);
@@ -291,33 +397,30 @@
       });
       
       input.value = "";
-      input.focus();
     };
 
     window.deleteData = (key) => {
       if (!currentUser) return;
-      if (confirm("Bạn có chắc chắn muốn xóa trường dữ liệu này?")) {
+      if (confirm("Xóa trường dữ liệu này?")) {
         remove(ref(db, `dieuTra/users/${currentUser.uid}/data/${key}`));
       }
     };
 
     window.searchData = () => {
       const searchWord = document.getElementById("searchInput").value.toLowerCase();
-      renderTable(userSnapshot, searchWord);
+      renderDataList(userSnapshot, searchWord);
     };
 
-    // Modal Manager
     window.showModal = id => document.getElementById(id).style.display = "block";
     window.hideModal = id => {
       document.getElementById(id).style.display = "none";
       document.getElementById(id === "backupModal" ? "backupPassword" : "importPassword").value = "";
     };
 
-    // THUẬT TOÁN BACKUP: Lấy đầy đủ tất cả thuộc tính và mã hóa chuỗi gốc (original)
     window.performBackup = () => {
       const pwd = document.getElementById("backupPassword").value;
-      if (!pwd) return alert("Vui lòng nhập mật khẩu mã hóa!");
-      if (!userSnapshot || !userSnapshot.exists()) return hideModal("backupModal"), alert("Bạn chưa có dữ liệu nào để sao lưu!");
+      if (!pwd) return alert("Nhập mật khẩu mã hóa!");
+      if (!userSnapshot || !userSnapshot.exists()) return hideModal("backupModal"), alert("Chưa có dữ liệu!");
 
       try {
         const rawData = userSnapshot.val();
@@ -325,36 +428,28 @@
 
         Object.keys(rawData).forEach(key => {
           const item = rawData[key];
-          
-          // Mã hóa nội dung văn bản gốc
-          const originalText = String(item.original || "");
-          const encryptedOriginal = CryptoJS.AES.encrypt(originalText, pwd).toString();
-
-          encryptedData[key] = {
-            ...item,
-            original: encryptedOriginal // Mã hóa AES bằng mật khẩu
-          };
+          const encryptedOriginal = CryptoJS.AES.encrypt(String(item.original || ""), pwd).toString();
+          encryptedData[key] = { ...item, original: encryptedOriginal };
         });
 
-        const blob = new Blob([JSON.stringify(encryptedData, null, 2)], { type: "application/json;charset=utf-8" });
+        const blob = new Blob([JSON.stringify(encryptedData, null, 2)], { type: "application/json" });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = `UserDB-Backup-${new Date().toISOString().slice(0,10)}.json`;
+        a.download = `Mobile-DB-${new Date().toISOString().slice(0,10)}.json`;
         a.click();
         URL.revokeObjectURL(a.href);
 
         hideModal("backupModal");
-        alert("Xuất dữ liệu Sao lưu thành công!");
+        alert("Xuất file Backup thành công!");
       } catch (err) {
-        alert("Lỗi xảy ra trong quá trình mã hóa dữ liệu: " + err.message);
+        alert("Lỗi mã hóa: " + err.message);
       }
     };
 
-    // THUẬT TOÁN IMPORT: Giải mã tệp Sao lưu và khôi phục nội dung gốc
     window.performImport = () => {
       const pwd = document.getElementById("importPassword").value;
       const file = document.getElementById("fileInput").files[0];
-      if (!pwd || !file) return alert("Vui lòng nhập mật khẩu giải mã và đính kèm tệp .JSON!");
+      if (!pwd || !file) return alert("Nhập mật khẩu và chọn file JSON!");
       
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -364,8 +459,6 @@
 
           for (const key of Object.keys(importedData)) {
             const item = importedData[key];
-            
-            // Giải mã AES
             const decryptedBytes = CryptoJS.AES.decrypt(item.original, pwd);
             const originalText = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
@@ -379,18 +472,25 @@
           }
 
           if (successCount > 0) {
-            alert(`Đã giải mã và nhập thành công ${successCount} bản ghi dữ liệu!`);
+            alert(`Khôi phục thành công ${successCount} bản ghi!`);
             hideModal("importModal");
             document.getElementById("fileInput").value = "";
+            document.getElementById("fileLabel").innerHTML = `<i class="fas fa-file-upload"></i> Chọn file JSON backup`;
           } else {
-            alert("Mật khẩu giải mã không chính xác hoặc dữ liệu file không hợp lệ!");
+            alert("Sai mật khẩu hoặc file không đúng định dạng!");
           }
         } catch (err) {
-          alert("Lỗi cấu trúc file JSON hoặc tệp đã bị hư hỏng!");
+          alert("Lỗi đọc file JSON!");
         }
       };
       reader.readAsText(file);
     };
+
+    document.getElementById("fileInput").addEventListener("change", (e) => {
+      if(e.target.files.length > 0) {
+        document.getElementById("fileLabel").innerHTML = `<i class="fas fa-file-alt"></i> ${e.target.files[0].name}`;
+      }
+    });
 
     document.getElementById("dataInput").addEventListener("keypress", e => e.key === "Enter" && addData());
     window.onclick = e => e.target.className === "modal" && hideModal(e.target.id);
